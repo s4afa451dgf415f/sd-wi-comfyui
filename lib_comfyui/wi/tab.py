@@ -4,12 +4,12 @@ import textwrap
 import gradio as gr
 import install_comfyui
 from lib_comfyui import external_code, ipc
-from lib_comfyui.webui import settings, gradio_utils
+from lib_comfyui.wi import settings, gradio_utils
 from lib_comfyui.default_workflow_types import sandbox_tab_workflow_type
 
 
-webui_client_id = gr.Text(
-    elem_id='comfyui_webui_client_id',
+wi_client_id = gr.Text(
+    elem_id='comfyui_wi_client_id',
     visible=False,
 )
 
@@ -42,11 +42,11 @@ def create_tab():
             key='workflow_type_ids',
             value=external_code.get_workflow_type_ids(),
         )
-        webui_client_id.render()
-    return [(tab, sandbox_tab_workflow_type.display_name, 'comfyui_webui_root')]
+        wi_client_id.render()
+    return [(tab, sandbox_tab_workflow_type.display_name, 'comfyui_wi_root')]
 
 
-@ipc.restrict_to_process('webui')
+@ipc.restrict_to_process('wi')
 def automatic_install_comfyui(should_install_manager, install_location):
     from modules import shared
     install_location = install_location.strip()
@@ -80,7 +80,7 @@ Alternatively, if you don't have ComfyUI installed, you can install it here:
 
 def get_comfyui_app_html():
     return textwrap.dedent(f'''
-        <div id="comfyui_webui_container">
+        <div id="comfyui_wi_container">
             <iframe
                 base_src="{settings.get_comfyui_iframe_url()}"
                 workflow_type_id="{sandbox_tab_workflow_type.get_ids()[0]}">

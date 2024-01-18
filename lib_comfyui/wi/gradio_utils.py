@@ -4,7 +4,7 @@ import json
 
 
 def ExtensionDynamicProperty(value: Any, key: str = None, *, visible=False, **kwargs):
-    extension_property = "sd_webui_comfyui"
+    extension_property = "sd_wi_comfyui"
     if key is not None:
         div_begin = f'<div {extension_property}_key="{key}">'
         div_end = '</div>'

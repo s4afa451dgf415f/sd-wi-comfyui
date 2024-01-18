@@ -5,7 +5,7 @@ import yaml
 import textwrap
 import torch
 from lib_comfyui import ipc, torch_utils
-from lib_comfyui.webui import settings
+from lib_comfyui.wi import settings
 
 
 class ModelPatcher:
@@ -24,10 +24,10 @@ class ModelPatcher:
         return self
 
     def set_model_patch(self, *args, **kwargs):
-        soft_raise('patching a webui resource is not yet supported')
+        soft_raise('patching a wi resource is not yet supported')
 
     def set_model_patch_replace(self, *args, **kwargs):
-        soft_raise('patching a webui resource is not yet supported')
+        soft_raise('patching a wi resource is not yet supported')
 
     def model_patches_to(self, device):
         return
@@ -40,14 +40,14 @@ class ModelPatcher:
         return self.model.device
 
     def add_patches(self, *args, **kwargs):
-        soft_raise('patching a webui resource is not yet supported')
+        soft_raise('patching a wi resource is not yet supported')
         return []
 
     def get_key_patches(self, *args, **kwargs):
         return {}
 
     def model_state_dict(self, *args, **kwargs):
-        soft_raise('accessing the webui checkpoint state dict from comfyui is not yet suppported')
+        soft_raise('accessing the wi checkpoint state dict from comfyui is not yet suppported')
         return {}
 
     def patch_model(self, *args, **kwargs):
@@ -86,7 +86,7 @@ class Model:
 
     def to(self, device, *args, **kwargs):
         assert str(device) == str(self.device), textwrap.dedent(f'''
-            cannot move the webui unet to a different device
+            cannot move the wi unet to a different device
             comfyui attempted to move it from {self.device} to {device}
         ''')
         return self
@@ -96,7 +96,7 @@ class Model:
         return adm_in_channels > 0
 
     def encode_adm(self, *args, **kwargs):
-        raise NotImplementedError('webui v-prediction checkpoints are not yet supported')
+        raise NotImplementedError('wi v-prediction checkpoints are not yet supported')
 
     def apply_model(self, *args, **kwargs):
         args = torch_utils.deep_to(args, device='cpu')
@@ -105,18 +105,18 @@ class Model:
         return torch_utils.deep_to(Model.sd_model_apply(*args, **kwargs), device=self.device)
 
     @staticmethod
-    @ipc.run_in_process('webui')
+    @ipc.run_in_process('wi')
     def sd_model_apply(*args, **kwargs):
         from modules import shared, devices
         args = torch_utils.deep_to(args, shared.sd_model.device)
         kwargs = torch_utils.deep_to(kwargs, shared.sd_model.device)
         with devices.autocast(), torch.no_grad():
             res = shared.sd_model.model(*args, **kwargs).cpu().share_memory_()
-            free_webui_memory()
+            free_wi_memory()
             return res
 
     def state_dict(self):
-        soft_raise('accessing the webui checkpoint state dict from comfyui is not yet suppported')
+        soft_raise('accessing the wi checkpoint state dict from comfyui is not yet suppported')
         return {}
 
     def __getattr__(self, item):
@@ -130,7 +130,7 @@ class Model:
         return res
 
     @staticmethod
-    @ipc.run_in_process('webui')
+    @ipc.run_in_process('wi')
     def sd_model_getattr(item):
         from modules import shared
         res = getattr(shared.sd_model, item)
@@ -155,7 +155,7 @@ class ClipWrapper:
         return
 
     def clip_layer(self, layer_idx, *args, **kwargs):
-        soft_raise(f'cannot control webui clip skip from comfyui. Tried to stop at layer {layer_idx}')
+        soft_raise(f'cannot control wi clip skip from comfyui. Tried to stop at layer {layer_idx}')
         return
 
     def tokenize(self, *args, **kwargs):
@@ -164,7 +164,7 @@ class ClipWrapper:
         return torch_utils.deep_to(ClipWrapper.sd_clip_tokenize_with_weights(*args, **kwargs), device=self.cond_stage_model.device)
 
     @staticmethod
-    @ipc.run_in_process('webui')
+    @ipc.run_in_process('wi')
     def sd_clip_tokenize_with_weights(text, return_word_ids=False):
         from modules import shared
         chunks, tokens_count, *_ = shared.sd_model.cond_stage_model.tokenize_line(text)
@@ -188,7 +188,7 @@ class ClipWrapper:
 
 class Clip:
     def clip_layer(self, layer_idx, *args, **kwargs):
-        soft_raise(f'cannot control webui clip skip from comfyui. Tried to stop at layer {layer_idx}')
+        soft_raise(f'cannot control wi clip skip from comfyui. Tried to stop at layer {layer_idx}')
         return
 
     def reset_clip_layer(self, *args, **kwargs):
@@ -200,7 +200,7 @@ class Clip:
         return torch_utils.deep_to(Clip.sd_clip_encode_token_weights(*args, **kwargs), device=self.device)
 
     @staticmethod
-    @ipc.run_in_process('webui')
+    @ipc.run_in_process('wi')
     def sd_clip_encode_token_weights(token_weight_pairs_list):
         from modules import shared
         tokens = [
@@ -219,13 +219,13 @@ class Clip:
 
     def to(self, device):
         assert str(device) == str(self.device), textwrap.dedent(f'''
-            cannot move the webui unet to a different device
+            cannot move the wi unet to a different device
             comfyui attempted to move it from {self.device} to {device}
         ''')
         return self
 
     def state_dict(self):
-        soft_raise('accessing the webui checkpoint state dict from comfyui is not yet suppported')
+        soft_raise('accessing the wi checkpoint state dict from comfyui is not yet suppported')
         return {}
 
     def __getattr__(self, item):
@@ -239,7 +239,7 @@ class Clip:
         return res
 
     @staticmethod
-    @ipc.run_in_process('webui')
+    @ipc.run_in_process('wi')
     def sd_clip_getattr(item):
         from modules import shared
         res = getattr(shared.sd_model.cond_stage_model.wrapped.transformer, item)
@@ -273,7 +273,7 @@ class VaeWrapper:
 
 class Vae:
     def state_dict(self):
-        soft_raise('accessing the webui checkpoint state dict from comfyui is not yet suppported')
+        soft_raise('accessing the wi checkpoint state dict from comfyui is not yet suppported')
         return {}
 
     def encode(self, *args, **kwargs):
@@ -283,14 +283,14 @@ class Vae:
         return DistributionProxy(res)
 
     @staticmethod
-    @ipc.run_in_process('webui')
+    @ipc.run_in_process('wi')
     def sd_vae_encode(*args, **kwargs):
         from modules import shared, devices
         args = torch_utils.deep_to(args, shared.sd_model.device)
         kwargs = torch_utils.deep_to(kwargs, shared.sd_model.device)
         with devices.autocast(), torch.no_grad():
             res = shared.sd_model.first_stage_model.encode(*args, **kwargs).sample().cpu().share_memory_()
-            free_webui_memory()
+            free_wi_memory()
             return res
 
     def decode(self, *args, **kwargs):
@@ -299,19 +299,19 @@ class Vae:
         return torch_utils.deep_to(Vae.sd_vae_decode(*args, **kwargs), device=self.device)
 
     @staticmethod
-    @ipc.run_in_process('webui')
+    @ipc.run_in_process('wi')
     def sd_vae_decode(*args, **kwargs):
         from modules import shared, devices
         args = torch_utils.deep_to(args, shared.sd_model.device)
         kwargs = torch_utils.deep_to(kwargs, shared.sd_model.device)
         with devices.autocast(), torch.no_grad():
             res = shared.sd_model.first_stage_model.decode(*args, **kwargs).cpu().share_memory_()
-            free_webui_memory()
+            free_wi_memory()
             return res
 
     def to(self, device):
         assert str(device) == str(self.device), textwrap.dedent(f'''
-            cannot move the webui unet to a different device
+            cannot move the wi unet to a different device
             comfyui attempted to move it from {self.device} to {device}
         ''')
         return self
@@ -327,7 +327,7 @@ class Vae:
         return res
 
     @staticmethod
-    @ipc.run_in_process('webui')
+    @ipc.run_in_process('wi')
     def sd_vae_getattr(item):
         from modules import shared
         res = getattr(shared.sd_model.first_stage_model, item)
@@ -343,8 +343,8 @@ class DistributionProxy:
         return self.sample_proxy
 
 
-@ipc.run_in_process('webui')
-def free_webui_memory():
+@ipc.run_in_process('wi')
+def free_wi_memory():
     gc.collect(1)
     torch.cuda.empty_cache()
 
@@ -372,17 +372,17 @@ def get_comfy_model_config():
     return comfy.model_detection.model_config_from_unet_config(unet_config)
 
 
-@ipc.run_in_process('webui')
+@ipc.run_in_process('wi')
 def sd_model_get_config():
     from modules import shared, sd_models, sd_models_config
     return sd_models_config.find_checkpoint_config(shared.sd_model.state_dict(), sd_models.select_checkpoint())
 
 
-@ipc.run_in_process('webui')
+@ipc.run_in_process('wi')
 def extra_networks_parse_prompts(prompts):
     from modules import extra_networks
     return extra_networks.parse_prompts(prompts)
 
 
 def soft_raise(message):
-    print(f'[sd-webui-comfyui] {message}', file=sys.stderr)
+    print(f'[sd-wi-comfyui] {message}', file=sys.stderr)

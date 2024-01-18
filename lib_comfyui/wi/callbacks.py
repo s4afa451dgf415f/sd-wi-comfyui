@@ -1,10 +1,10 @@
 from modules.processing import StableDiffusionProcessingTxt2Img, StableDiffusionProcessingImg2Img
 from lib_comfyui import comfyui_process, ipc, global_state, external_code, default_workflow_types
-from lib_comfyui.webui import tab, settings, patches, reverse_proxy
+from lib_comfyui.wi import tab, settings, patches, reverse_proxy
 from lib_comfyui.comfyui import type_conversion
 
 
-@ipc.restrict_to_process('webui')
+@ipc.restrict_to_process('wi')
 def register_callbacks():
     from modules import script_callbacks
     script_callbacks.on_ui_tabs(on_ui_tabs)
@@ -15,29 +15,29 @@ def register_callbacks():
     script_callbacks.on_before_image_saved(on_before_image_saved)
 
 
-@ipc.restrict_to_process('webui')
+@ipc.restrict_to_process('wi')
 def on_ui_tabs():
     return tab.create_tab()
 
 
-@ipc.restrict_to_process('webui')
+@ipc.restrict_to_process('wi')
 def on_ui_settings():
     return settings.create_section()
 
 
-@ipc.restrict_to_process('webui')
+@ipc.restrict_to_process('wi')
 def on_after_component(*args, **kwargs):
     patches.watch_prompts(*args, **kwargs)
     settings.subscribe_update_button(*args, **kwargs)
 
 
-@ipc.restrict_to_process('webui')
+@ipc.restrict_to_process('wi')
 def on_app_started(_gr_root, fast_api):
     comfyui_process.start()
     reverse_proxy.create_comfyui_proxy(fast_api)
 
 
-@ipc.restrict_to_process('webui')
+@ipc.restrict_to_process('wi')
 def on_script_unloaded():
     comfyui_process.stop()
     patches.clear_patches()
@@ -45,7 +45,7 @@ def on_script_unloaded():
     external_code.clear_workflow_types()
 
 
-@ipc.restrict_to_process('webui')
+@ipc.restrict_to_process('wi')
 def on_before_image_saved(params):
     if isinstance(params.p, StableDiffusionProcessingTxt2Img):
         tab = 'txt2img'
@@ -60,8 +60,8 @@ def on_before_image_saved(params):
     results = external_code.run_workflow(
         workflow_type=default_workflow_types.before_save_image_workflow_type,
         tab=tab,
-        batch_input=type_conversion.webui_image_to_comfyui([params.image]),
+        batch_input=type_conversion.wi_image_to_comfyui([params.image]),
         identity_on_error=True,
     )
 
-    params.image = type_conversion.comfyui_image_to_webui(results[0], return_tensors=False)[0]
+    params.image = type_conversion.comfyui_image_to_wi(results[0], return_tensors=False)[0]

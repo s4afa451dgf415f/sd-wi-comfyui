@@ -5,16 +5,16 @@ from lib_comfyui import ipc
 
 
 @ipc.restrict_to_process('comfyui')
-def share_webui_folder_paths():
+def share_wi_folder_paths():
     from folder_paths import add_model_folder_path
-    webui_folder_paths = get_webui_folder_paths()
-    for folder_id, folder_paths in webui_folder_paths.items():
+    wi_folder_paths = get_wi_folder_paths()
+    for folder_id, folder_paths in wi_folder_paths.items():
         for folder_path in folder_paths:
             add_model_folder_path(folder_id, folder_path)
 
 
-@ipc.run_in_process('webui')
-def get_webui_folder_paths() -> dict:
+@ipc.run_in_process('wi')
+def get_wi_folder_paths() -> dict:
     from modules import paths, shared, sd_models
     return {
         'checkpoints': [sd_models.model_path] + ([shared.cmd_opts.ckpt_dir] if shared.cmd_opts.ckpt_dir else []),
@@ -28,8 +28,8 @@ def get_webui_folder_paths() -> dict:
     }
 
 
-# see https://github.com/AUTOMATIC1111/stable-diffusion-webui/blob/f865d3e11647dfd6c7b2cdf90dde24680e58acd8/modules/modelloader.py#L137
-@ipc.restrict_to_process('webui')
+# see https://github.com/AUTOMATIC1111/stable-diffusion-wi/blob/f865d3e11647dfd6c7b2cdf90dde24680e58acd8/modules/modelloader.py#L137
+@ipc.restrict_to_process('wi')
 def get_upscaler_paths():
     from modules import shared, modelloader
     # We can only do this 'magic' method to dynamically load upscalers if they are referenced,
@@ -66,14 +66,14 @@ def get_upscaler_paths():
     return upscaler_paths
 
 
-# see https://github.com/Mikubill/sd-webui-controlnet/blob/07bed6ccf8a468a45b2833cfdadc749927cbd575/scripts/global_state.py#L205
-@ipc.restrict_to_process('webui')
+# see https://github.com/Mikubill/sd-wi-controlnet/blob/07bed6ccf8a468a45b2833cfdadc749927cbd575/scripts/global_state.py#L205
+@ipc.restrict_to_process('wi')
 def get_controlnet_paths():
     from modules import shared
-    controlnet_path = os.path.join(shared.extensions_dir, 'sd-webui-controlnet')
+    controlnet_path = os.path.join(shared.extensions_dir, 'sd-wi-controlnet')
     try:
         sys.path.insert(0, controlnet_path)
-        controlnet = importlib.import_module('extensions.sd-webui-controlnet.scripts.external_code', 'external_code')
+        controlnet = importlib.import_module('extensions.sd-wi-controlnet.scripts.external_code', 'external_code')
     except:
         return []
     finally:
@@ -89,8 +89,8 @@ def get_controlnet_paths():
     ]
 
 
-@ipc.run_in_process('webui')
-def webui_save_image(*args, relative_path=None, **kwargs):
+@ipc.run_in_process('wi')
+def wi_save_image(*args, relative_path=None, **kwargs):
     from modules import images, paths
     if relative_path is not None:
         kwargs['path'] = os.path.join(paths.data_path, relative_path)

@@ -4,7 +4,7 @@ from typing import Tuple
 
 import gradio as gr
 from lib_comfyui import external_code, global_state
-from lib_comfyui.webui import gradio_utils, settings
+from lib_comfyui.wi import gradio_utils, settings
 from lib_comfyui.comfyui import iframe_requests
 
 

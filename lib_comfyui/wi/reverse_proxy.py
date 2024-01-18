@@ -1,8 +1,8 @@
-from lib_comfyui.webui import settings
+from lib_comfyui.wi import settings
 from lib_comfyui import ipc, global_state
 
 
-@ipc.restrict_to_process("webui")
+@ipc.restrict_to_process("wi")
 def create_comfyui_proxy(fast_api):
     if not (global_state.enabled and global_state.reverse_proxy_enabled):
         return
@@ -12,7 +12,7 @@ def create_comfyui_proxy(fast_api):
 
     create_http_reverse_proxy(fast_api, comfyui_url, proxy_route)
     create_ws_reverse_proxy(fast_api, comfyui_url, proxy_route)
-    print("[sd-webui-comfyui]", f"Created a reverse proxy route to ComfyUI: {proxy_route}")
+    print("[sd-wi-comfyui]", f"Created a reverse proxy route to ComfyUI: {proxy_route}")
 
 
 def create_http_reverse_proxy(fast_api, comfyui_url, proxy_route):
@@ -48,7 +48,7 @@ async def async_iter_raw_patched(response, proxy_route):
     import_paths_to_patch = [
         "/scripts/",
         "/extensions/",
-        "/extensions/webui_scripts/"
+        "/extensions/wi_scripts/"
     ]
     patches = [
         (b'/favicon', proxy_route_bytes + b'/favicon'),
