@@ -26,7 +26,7 @@ function onComfyuiTabLoaded(callback) {
         getTabNav() === null ||
         getWebuiClientIdTextArea() === null
     ) {
-        // webui not yet ready, try again in a bit
+        // wi not yet ready, try again in a bit
         setTimeout(() => { onComfyuiTabLoaded(callback); }, SD_WEBUI_COMFYUI_POLLING_TIMEOUT);
         return;
     }
@@ -109,15 +109,15 @@ function getTabNav() {
 }
 
 function getComfyuiTab() {
-    return document.getElementById("tab_comfyui_webui_root") ?? null;
+    return document.getElementById("tab_comfyui_wi_root") ?? null;
 }
 
 function getComfyuiContainer() {
-    return document.getElementById("comfyui_webui_container") ?? null;
+    return document.getElementById("comfyui_wi_container") ?? null;
 }
 
 function getWebuiClientIdTextArea() {
-    return document.querySelector("#comfyui_webui_client_id textarea") ?? null;
+    return document.querySelector("#comfyui_wi_client_id textarea") ?? null;
 }
 
 function getFooter() {
@@ -133,7 +133,7 @@ function getWorkflowTypeIds() {
 }
 
 function getExtensionDynamicProperty(key) {
-    return JSON.parse(document.querySelector(`[sd_webui_comfyui_key="${key}"]`)?.innerText ?? "null");
+    return JSON.parse(document.querySelector(`[sd_wi_comfyui_key="${key}"]`)?.innerText ?? "null");
 }
 
 function reloadFrameElement(iframeElement) {
@@ -145,7 +145,7 @@ function setupIFrame(workflowTypeId) {
 
     const iframeSearchParams = new URLSearchParams();
     iframeSearchParams.set("workflowTypeId", workflowTypeId);
-    iframeSearchParams.set("webuiClientId", WEBUI_CLIENT_ID);
+    iframeSearchParams.set("wiClientId", WEBUI_CLIENT_ID);
     const iframe = getWorkflowTypeIFrame(workflowTypeId);
     const base_src = iframe.getAttribute("base_src");
     const iframe_src = base_src + "?" + iframeSearchParams.toString();

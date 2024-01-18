@@ -1,6 +1,6 @@
-from lib_comfyui.webui.settings import opts
+from lib_comfyui.wi.settings import opts
 from torchvision.transforms.functional import to_pil_image
-from lib_comfyui.webui.paths import webui_save_image
+from lib_comfyui.wi.paths import wi_save_image
 
 
 class WebuiSaveImage:
@@ -29,7 +29,7 @@ class WebuiSaveImage:
 
         for image in images:
             pil_image = to_pil_image(image.permute(2, 0, 1))
-            filename, _ = webui_save_image(image=pil_image, relative_path=output_dir, basename='')
+            filename, _ = wi_save_image(image=pil_image, relative_path=output_dir, basename='')
 
         return []
 

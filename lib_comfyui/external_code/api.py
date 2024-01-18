@@ -128,7 +128,7 @@ def set_workflow_types(workflow_types: List[WorkflowType]) -> None:
         NotImplementedError: if the workflow types list is modified after the ui has been instantiated
     Notes:
         A deep copy of workflow_types is used when calling this function from the comfyui process
-        No copy is made when calling this function from the webui process
+        No copy is made when calling this function from the wi process
     """
     if getattr(global_state, 'is_ui_instantiated', False):
         raise NotImplementedError('Cannot modify workflow types after the ui has been instantiated')
@@ -201,7 +201,7 @@ def is_workflow_type_enabled(workflow_type_id: str) -> bool:
     )
 
 
-@ipc.restrict_to_process('webui')
+@ipc.restrict_to_process('wi')
 def run_workflow(
     workflow_type: WorkflowType,
     tab: str,
@@ -288,7 +288,7 @@ def run_workflow(
             traceback.print_exception(e)
 
         if not workflow_type.is_same_io():
-            print('[sd-webui-comfyui]', f'Returning input of type {workflow_type.input_types}, which likely does not match the expected output type {workflow_type.types}', file=sys.stderr)
+            print('[sd-wi-comfyui]', f'Returning input of type {workflow_type.input_types}, which likely does not match the expected output type {workflow_type.types}', file=sys.stderr)
 
         # denormalize tuple -> tuple|str|dict
         if isinstance(workflow_type.types, tuple):

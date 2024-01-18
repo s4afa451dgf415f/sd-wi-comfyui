@@ -1,5 +1,5 @@
 from lib_comfyui import ipc
-from lib_comfyui.webui import settings
+from lib_comfyui.wi import settings
 
 
 COMFYUI_ARGV_PREFIX = 'comfyui_'
@@ -11,7 +11,7 @@ def get_comfyui_args():
     return args
 
 
-@ipc.restrict_to_process('webui')
+@ipc.restrict_to_process('wi')
 def extract_comfyui_argv():
     from modules import shared
     result = []

@@ -2,7 +2,7 @@ import os.path
 from lib_comfyui import ipc
 
 
-@ipc.run_in_process('webui')
+@ipc.run_in_process('wi')
 def get_extension_paths_to_load():
     from modules.extensions import list_extensions, active
     list_extensions()

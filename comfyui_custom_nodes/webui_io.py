@@ -25,7 +25,7 @@ class FromWebui:
     RETURN_NAMES = ()
     FUNCTION = "get_node_inputs"
 
-    CATEGORY = "webui"
+    CATEGORY = "wi"
 
     @staticmethod
     def get_node_inputs(void):
@@ -41,7 +41,7 @@ class ToWebui:
     RETURN_TYPES = ()
     FUNCTION = "extend_node_outputs"
 
-    CATEGORY = "webui"
+    CATEGORY = "wi"
 
     OUTPUT_NODE = True
 

@@ -18,12 +18,12 @@ class ComfyuiIFrameRequests:
             data = {}
 
         cls = ComfyuiIFrameRequests
-        if global_state.focused_webui_client_id is None:
-            raise RuntimeError('No active webui connection')
+        if global_state.focused_wi_client_id is None:
+            raise RuntimeError('No active wi connection')
 
-        ws_client_ids = cls.sid_map[global_state.focused_webui_client_id]
+        ws_client_ids = cls.sid_map[global_state.focused_wi_client_id]
         if workflow_type not in ws_client_ids:
-            raise RuntimeError(f"The workflow type {workflow_type} has not been registered by the active webui client {global_state.focused_webui_client_id}")
+            raise RuntimeError(f"The workflow type {workflow_type} has not been registered by the active wi client {global_state.focused_wi_client_id}")
 
         clear_queue(cls.finished_comfyui_queue)
         cls.server_instance.send_sync(request, data, ws_client_ids[workflow_type])
@@ -31,7 +31,7 @@ class ComfyuiIFrameRequests:
         return cls.finished_comfyui_queue.get()
 
     @staticmethod
-    @ipc.restrict_to_process('webui')
+    @ipc.restrict_to_process('wi')
     def start_workflow_sync(
         batch_input_args: Tuple[Any, ...],
         workflow_type_id: str,
@@ -40,7 +40,7 @@ class ComfyuiIFrameRequests:
     ) -> List[Dict[str, Any]]:
         from modules import shared
         if shared.state.interrupted:
-            raise RuntimeError('The workflow was not started because the webui has been interrupted')
+            raise RuntimeError('The workflow was not started because the wi has been interrupted')
 
         global_state.node_inputs = batch_input_args
         global_state.node_outputs = []
@@ -51,7 +51,7 @@ class ComfyuiIFrameRequests:
 
             # unsafe queue tracking
             ComfyuiIFrameRequests.send(
-                request='webui_queue_prompt',
+                request='wi_queue_prompt',
                 workflow_type=workflow_type_id,
                 data={
                     'requiredNodeTypes': [],
@@ -69,7 +69,7 @@ class ComfyuiIFrameRequests:
             global_state.node_inputs = None
 
     @staticmethod
-    @ipc.restrict_to_process('webui')
+    @ipc.restrict_to_process('wi')
     def validate_amount_of_nodes_or_throw(
         workflow_type_id: str,
         max_amount_of_FromWebui_nodes: Optional[int],
@@ -98,13 +98,13 @@ class ComfyuiIFrameRequests:
     @ipc.restrict_to_process('comfyui')
     def register_client(request) -> None:
         workflow_type_id = request['workflowTypeId']
-        webui_client_id = request['webuiClientId']
+        wi_client_id = request['wiClientId']
         sid = request['sid']
 
-        if webui_client_id not in ComfyuiIFrameRequests.sid_map:
-            ComfyuiIFrameRequests.sid_map[webui_client_id] = {}
+        if wi_client_id not in ComfyuiIFrameRequests.sid_map:
+            ComfyuiIFrameRequests.sid_map[wi_client_id] = {}
 
-        ComfyuiIFrameRequests.sid_map[webui_client_id][workflow_type_id] = sid
+        ComfyuiIFrameRequests.sid_map[wi_client_id][workflow_type_id] = sid
         print(f'registered ws - {workflow_type_id} - {sid}')
 
     @staticmethod
@@ -135,14 +135,14 @@ def extend_infotext_with_comfyui_workflows(p, tab):
 
 def set_workflow_graph(workflow_json, workflow_type_id):
     return ComfyuiIFrameRequests.send(
-        request='webui_set_workflow',
+        request='wi_set_workflow',
         workflow_type=workflow_type_id,
         data={'workflow': workflow_json}
     )
 
 
 def get_workflow_graph(workflow_type_id):
-    return ComfyuiIFrameRequests.send(request='webui_serialize_graph', workflow_type=workflow_type_id)
+    return ComfyuiIFrameRequests.send(request='wi_serialize_graph', workflow_type=workflow_type_id)
 
 
 def clear_queue(queue: multiprocessing.Queue):

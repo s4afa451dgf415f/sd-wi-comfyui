@@ -1,15 +1,15 @@
-div#tab_comfyui_webui_root {
+div#tab_comfyui_wi_root {
     border: none;
 }
 
-div#comfyui_webui_container {
+div#comfyui_wi_container {
     position: fixed;
     left: 0px;
     width: 100%;
     bottom: 0px;
 }
 
-div#comfyui_webui_container iframe {
+div#comfyui_wi_container iframe {
     width: 100%;
     height: 100%;
 }

@@ -84,7 +84,7 @@ def restore_torch_load():
     import torch
     original_torch_load = torch.load
 
-    if ipc.current_process_id == 'webui':
+    if ipc.current_process_id == 'wi':
         try:
             from modules import safe
             torch.load = safe.unsafe_torch_load

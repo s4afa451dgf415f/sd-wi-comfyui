@@ -10,4 +10,4 @@ def preload(parser):
     parser.add_argument("--comfyui-lowvram", action='store_true', default=None)
     parser.add_argument("--comfyui-novram", action='store_true', default=None)
     parser.add_argument("--comfyui-cpu", action='store_true', default=None)
-    parser.add_argument("--webui-comfyui-client-address", type=str, default=None)
+    parser.add_argument("--wi-comfyui-client-address", type=str, default=None)

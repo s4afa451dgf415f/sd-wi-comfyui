@@ -1,4 +1,4 @@
-from lib_comfyui.webui import proxies
+from lib_comfyui.wi import proxies
 from lib_comfyui import global_state
 
 

@@ -8,14 +8,14 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout sd-webui-comfyui
+      - name: Checkout sd-wi-comfyui
         uses: actions/checkout@v3
 
-      - name: Checkout stable-diffusion-webui
+      - name: Checkout stable-diffusion-wi
         uses: actions/checkout@v3
         with:
-          repository: 'AUTOMATIC1111/stable-diffusion-webui'
-          path: 'stable-diffusion-webui'
+          repository: 'AUTOMATIC1111/stable-diffusion-wi'
+          path: 'stable-diffusion-wi'
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v4
@@ -24,7 +24,7 @@ jobs:
           cache: pip
           cache-dependency-path: |
             **/requirements*txt
-            stable-diffusion-webui/launch.py
+            stable-diffusion-wi/launch.py
 
       - name: Install test dependencies
         run: |
@@ -35,7 +35,7 @@ jobs:
 
       - name: Setup environment
         run: |
-          cd stable-diffusion-webui
+          cd stable-diffusion-wi
           python launch.py --skip-torch-cuda-test --exit
         env:
           PIP_DISABLE_PIP_VERSION_CHECK: "1"

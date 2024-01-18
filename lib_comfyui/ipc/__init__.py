@@ -19,7 +19,7 @@ def run_in_process(process_id):
                 start = time.time()
                 res = current_callback_proxies[process_id].get(args=(function.__module__, function.__qualname__, args, kwargs))
                 logging.debug(
-                    '[sd-webui-comfyui] IPC call %s -> %s %s:\t%s',
+                    '[sd-wi-comfyui] IPC call %s -> %s %s:\t%s',
                     current_process_id, process_id,
                     time.time() - start,
                     f'{function.__module__}.{function.__qualname__}(*{args}, **{kwargs})'
@@ -61,7 +61,7 @@ def call_fully_qualified(module_name, qualified_name, args, kwargs):
     return function(*args, **kwargs)
 
 
-current_process_id = 'webui'
+current_process_id = 'wi'
 current_callback_listeners = {}
 current_callback_proxies = {}
 
@@ -71,7 +71,7 @@ def start_callback_listeners():
     for callback_listener in current_callback_listeners.values():
         callback_listener.start()
 
-    print('[sd-webui-comfyui]', 'Started callback listeners for process', current_process_id)
+    print('[sd-wi-comfyui]', 'Started callback listeners for process', current_process_id)
 
 
 def stop_callback_listeners():
@@ -83,7 +83,7 @@ def stop_callback_listeners():
     current_callback_listeners.clear()
     gc.collect()
 
-    print('[sd-webui-comfyui]', 'Stopped callback listeners for process', current_process_id)
+    print('[sd-wi-comfyui]', 'Stopped callback listeners for process', current_process_id)
 
 
 def callback_listeners_started():

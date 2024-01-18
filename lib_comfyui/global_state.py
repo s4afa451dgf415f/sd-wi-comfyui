@@ -7,7 +7,7 @@ from lib_comfyui import ipc
 enabled: bool
 is_ui_instantiated: bool
 queue_front: bool
-focused_webui_client_id: Optional[str] = None
+focused_wi_client_id: Optional[str] = None
 
 workflow_types: List
 enabled_workflow_type_ids: Dict[str, bool]
@@ -40,7 +40,7 @@ class GlobalState(ModuleType):
         return GlobalState.getattr(item)
 
     @staticmethod
-    @ipc.run_in_process('webui')
+    @ipc.run_in_process('wi')
     def getattr(item):
         try:
             return GlobalState.__state[item]
@@ -51,7 +51,7 @@ class GlobalState(ModuleType):
         GlobalState.setattr(item, value)
 
     @staticmethod
-    @ipc.run_in_process('webui')
+    @ipc.run_in_process('wi')
     def setattr(item, value):
         GlobalState.__state[item] = value
 
@@ -59,7 +59,7 @@ class GlobalState(ModuleType):
         GlobalState.delattr(item)
 
     @staticmethod
-    @ipc.run_in_process('webui')
+    @ipc.run_in_process('wi')
     def delattr(item):
         del GlobalState.__state[item]
 
@@ -67,7 +67,7 @@ class GlobalState(ModuleType):
         return GlobalState.contains(item)
 
     @staticmethod
-    @ipc.run_in_process('webui')
+    @ipc.run_in_process('wi')
     def contains(item):
         return item in GlobalState.__state
 

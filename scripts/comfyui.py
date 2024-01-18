@@ -2,7 +2,7 @@ import torch
 
 from modules import scripts
 from lib_comfyui import global_state, platform_utils, external_code, default_workflow_types, comfyui_process
-from lib_comfyui.webui import callbacks, settings, patches, gradio_utils, accordion, tab
+from lib_comfyui.wi import callbacks, settings, patches, gradio_utils, accordion, tab
 from lib_comfyui.comfyui import iframe_requests, type_conversion
 
 
@@ -39,16 +39,16 @@ class ComfyUIScript(scripts.Script):
         self.accordion.arrange_components()
         self.accordion.connect_events()
         self.accordion.setup_infotext_fields(self)
-        return (tab.webui_client_id,) + self.accordion.get_script_ui_components()
+        return (tab.wi_client_id,) + self.accordion.get_script_ui_components()
 
-    def process(self, p, webui_client_id, queue_front, enabled_workflow_type_ids, *args, **kwargs):
+    def process(self, p, wi_client_id, queue_front, enabled_workflow_type_ids, *args, **kwargs):
         if not getattr(global_state, 'enabled', True):
             return
 
         if not hasattr(global_state, 'enabled_workflow_type_ids'):
             global_state.enabled_workflow_type_ids = {}
 
-        global_state.focused_webui_client_id = webui_client_id
+        global_state.focused_wi_client_id = wi_client_id
         global_state.enabled_workflow_type_ids.update(enabled_workflow_type_ids)
         global_state.queue_front = queue_front
         patches.patch_processing(p)
@@ -65,7 +65,7 @@ class ComfyUIScript(scripts.Script):
             batch_results = external_code.run_workflow(
                 workflow_type=default_workflow_types.postprocess_workflow_type,
                 tab=self.get_tab(),
-                batch_input=type_conversion.webui_image_to_comfyui(torch.stack(batch_input).to('cpu')),
+                batch_input=type_conversion.wi_image_to_comfyui(torch.stack(batch_input).to('cpu')),
                 identity_on_error=True,
             )
 
@@ -73,7 +73,7 @@ class ComfyUIScript(scripts.Script):
             all_results.extend(
                 image
                 for batch in batch_results
-                for image in type_conversion.comfyui_image_to_webui(batch, return_tensors=True))
+                for image in type_conversion.comfyui_image_to_wi(batch, return_tensors=True))
 
         p_rescale_factor = max(1, p_rescale_factor)
         for list_to_scale in [p.prompts, p.negative_prompts, p.seeds, p.subseeds]:
@@ -90,11 +90,11 @@ class ComfyUIScript(scripts.Script):
         results = external_code.run_workflow(
             workflow_type=default_workflow_types.postprocess_image_workflow_type,
             tab=self.get_tab(),
-            batch_input=type_conversion.webui_image_to_comfyui([pp.image]),
+            batch_input=type_conversion.wi_image_to_comfyui([pp.image]),
             identity_on_error=True,
         )
 
-        pp.image = type_conversion.comfyui_image_to_webui(results[0], return_tensors=False)[0]
+        pp.image = type_conversion.comfyui_image_to_wi(results[0], return_tensors=False)[0]
 
 
 def extract_contiguous_buckets(images, batch_size):

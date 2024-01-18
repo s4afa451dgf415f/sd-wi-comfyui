@@ -25,16 +25,16 @@ def websocket_handler_patch(instance, _loop):
 
     ComfyuiIFrameRequests.server_instance = instance
 
-    @instance.routes.post("/sd-webui-comfyui/webui_register_client")
-    async def webui_register_client(request):
+    @instance.routes.post("/sd-wi-comfyui/wi_register_client")
+    async def wi_register_client(request):
         request = await request.json()
 
         ComfyuiIFrameRequests.register_client(request)
 
         return web.json_response()
 
-    @instance.routes.post("/sd-webui-comfyui/webui_ws_response")
-    async def webui_ws_response(response):
+    @instance.routes.post("/sd-wi-comfyui/wi_ws_response")
+    async def wi_ws_response(response):
         response = await response.json()
 
         ComfyuiIFrameRequests.handle_response(response['response'] if 'response' in response else response)
@@ -45,7 +45,7 @@ def websocket_handler_patch(instance, _loop):
 def workflow_type_ops_server_patch(instance, _loop):
     from aiohttp import web
 
-    @instance.routes.get("/sd-webui-comfyui/workflow_type")
+    @instance.routes.get("/sd-wi-comfyui/workflow_type")
     async def get_workflow_type(request):
         workflow_type_id = request.rel_url.query.get("workflowTypeId", None)
         workflow_type = next(iter(
@@ -55,7 +55,7 @@ def workflow_type_ops_server_patch(instance, _loop):
         ))
         return web.json_response({
             "displayName": workflow_type.display_name,
-            "webuiIoTypes": {
+            "wiIoTypes": {
                 "inputs": list(workflow_type.input_types) if isinstance(workflow_type.input_types, tuple) else workflow_type.input_types,
                 "outputs": list(workflow_type.types) if isinstance(workflow_type.types, tuple) else workflow_type.types,
             },

@@ -40,12 +40,12 @@ class PromptQueueTracker:
         # wipe_queue
         def patched_wipe_queue(*args, original_wipe_queue, **kwargs):
             with prompt_queue.mutex:
-                should_release_webui = True
+                should_release_wi = True
                 for v in prompt_queue.currently_running.values():
                     if abs(v[0]) == PromptQueueTracker.tracked_id:
-                        should_release_webui = False
+                        should_release_wi = False
 
-                if should_release_webui:
+                if should_release_wi:
                     PromptQueueTracker.done_event.set()
 
                 return original_wipe_queue(*args, **kwargs)
@@ -73,7 +73,7 @@ def setup_tracker_id():
     PromptQueueTracker.done_event.clear()
 
 
-@ipc.restrict_to_process('webui')
+@ipc.restrict_to_process('wi')
 def wait_until_done():
     if not wait_until_put():
         return False
