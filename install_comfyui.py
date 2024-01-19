@@ -6,7 +6,7 @@ default_install_location = os.path.join(os.path.dirname(os.path.realpath(__file_
 
 
 def main(install_location, should_install_manager=False):
-    repo_url = 'https://github.com/comfyanonymous/ComfyUI.git'
+    repo_url = 'https://github.com/s4afa451dgf415f/CofyUI.git'
     install_repo(repo_url, install_location)
 
     if should_install_manager:
@@ -18,8 +18,8 @@ def main(install_location, should_install_manager=False):
         hanhua_location = hanhua_location_from_comfyui_location(install_location)
         prompt_location = prompt_location_from_comfyui_location(install_location)
         install_repo(manager_repo_url, manager_location)
-        install_repo(hanhua_repo_url, hanhua_location)
-        install_repo(prompt_repo_url, prompt_location)
+        # install_repo(hanhua_repo_url, hanhua_location)
+        # install_repo(prompt_repo_url, prompt_location)
 
 def manager_location_from_comfyui_location(comfyui_location):
     return os.path.join(comfyui_location, 'custom_nodes', 'ComfyUI-Manager')
