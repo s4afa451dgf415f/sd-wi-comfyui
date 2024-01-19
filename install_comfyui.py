@@ -2,7 +2,7 @@ import os
 import sys
 
 
-default_install_location = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'ComfyUI')
+default_install_location = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'CofyUI')
 
 
 def main(install_location, should_install_manager=False):
@@ -17,7 +17,7 @@ def main(install_location, should_install_manager=False):
         manager_location = manager_location_from_comfyui_location(install_location)
         hanhua_location = hanhua_location_from_comfyui_location(install_location)
         prompt_location = prompt_location_from_comfyui_location(install_location)
-        install_repo(manager_repo_url, manager_location)
+        # install_repo(manager_repo_url, manager_location)
         # install_repo(hanhua_repo_url, hanhua_location)
         # install_repo(prompt_repo_url, prompt_location)
 
